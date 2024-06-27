@@ -1,7 +1,3 @@
 # CodeSamples
-Showcase of some programming sample code.
 
-This repository includes:
-- Multi-threaded implementation of a ring buffer.
-- Multi-threaded implementation of a queue.
-- Implementation of a granular synth.
+This repository is used to showcase some sample code in different programming languages, primarily focused on audio processing.

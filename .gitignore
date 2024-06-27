@@ -1,0 +1,7 @@
+
+/cpp/.vscode
+/cpp/build
+/cpp/libs/portaudio
+/cpp/external/audiofile
+
+.DS_Store
