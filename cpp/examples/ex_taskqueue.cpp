@@ -42,7 +42,7 @@ public:
         auto task = [](void* context, void* params, float delatTime)
         {
             Worker* worker = (Worker*)context;
-            LM_VERBOSE("This is a task...");
+            LM_LOG("This is a task...");
         };
 
         m_queue.push(task, this);
@@ -61,7 +61,7 @@ private:
                 continue;
             }
 
-            LM_VERBOSE("Begin frame.");
+            LM_LOG("Begin frame.");
 
             /* For simplicity we define a fix size of number of tasks per frame. */
             int numProcessedTasks = 0;
@@ -83,7 +83,7 @@ private:
                 ++numProcessedTasks;
             }
 
-            LM_VERBOSE("End frame.");
+            LM_LOG("End frame.");
         }
     }
 
