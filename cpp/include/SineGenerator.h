@@ -1,7 +1,8 @@
 #pragma once
 
-#include <cmath>
 #include <memory>
+
+#include "Math.h"
 
 /*
     A sine generator using a wavetable to generate a sinusoid.
@@ -68,7 +69,7 @@ private:
         /* Calculating the phase value for the sine wave */
         for(int i=0; i<m_dataSize; ++i)
         {
-            m_data[i] = (float) sin(((double)i/(double)m_dataSize) *  M_PI * 2.);
+            m_data[i] = (float) sin(((double)i/(double)m_dataSize) *  Math::M_PI * 2.);
         }
     }
 

@@ -10,6 +10,7 @@
     #define LM_LOG(fmt, ...) (void)0
     #define LM_ERROR(fmt, ...) (void)0
 #else
+    #include <cstdarg>
     #include <iostream>
     #include <mutex>
 

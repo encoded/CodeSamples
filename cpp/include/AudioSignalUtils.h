@@ -1,8 +1,8 @@
 #pragma once
 
-#define _USE_MATH_DEFINES
-#include <cmath>
 #include <vector>
+
+#include "Math.h"
 
 /*
     A collection of audio signal utility functions.
@@ -46,7 +46,7 @@ namespace AudioSignalUtils
                 N -= 1;
             }
 
-            return static_cast<T>(0.5 * (1. - std::cos(2. * M_PI * n / N)));
+            return static_cast<T>(0.5 * (1. - std::cos(2. * Math::M_PI * n / N)));
         }
 
         template<typename T>
@@ -57,7 +57,7 @@ namespace AudioSignalUtils
                 N -= 1;
             }
 
-            return static_cast<T>(0.54 - 0.46 * std::cos(2. * M_PI * n / N));
+            return static_cast<T>(0.54 - 0.46 * std::cos(2. * Math::M_PI * n / N));
         }
 
         template<typename T>
@@ -68,7 +68,7 @@ namespace AudioSignalUtils
                 N -= 1;
             }
 
-            return static_cast<T>(0.42 - 0.5 * std::cos(2. * M_PI * n / N) + 0.08 * std::cos(4. * M_PI * n / N));
+            return static_cast<T>(0.42 - 0.5 * std::cos(2. * Math::M_PI * n / N) + 0.08 * std::cos(4. * Math::M_PI * n / N));
         }
 
         /* 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <thread>
-#include <semaphore>
 #include <iostream>
+#include <semaphore>
+#include <thread>
 
 #include "LogMutex.h"
 #include "RingBuffer.h"
