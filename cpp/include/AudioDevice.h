@@ -1,6 +1,6 @@
 #pragma once
 
-#include <bits/stdc++.h>
+#include <cstring>
 #include <iostream>
 #include <thread>
 

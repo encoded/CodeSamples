@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <atomic>
-#include <bits/stdc++.h>
+#include <cstring>
 #include <functional>
 
 #include "LogMutex.h"

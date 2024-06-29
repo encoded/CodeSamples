@@ -1,7 +1,7 @@
 #pragma once
 
 #include <atomic>
-#include <bits/stdc++.h>
+#include <cstring>
 
 /*
     RingBuffer
