@@ -10,7 +10,7 @@
 
 /************************ PARAMS ****************************/
 
-const std::string g_filePath = std::string(RESOURCES_PATH) + "/audio/test.wav";
+const std::string g_filePath = std::string(TESTSOUND_PATH);
 
 /************************************************************/
 
