@@ -26,7 +26,7 @@ This project requires the following libraries:
 
 ### Install Dependecies
 
-In order to install the required dependecies you can run the following command:
+Dependecies can be installed running the following command:
 ```bash
 make install
 ```
@@ -35,25 +35,34 @@ You may need to install the following prerequisites based on your platform befor
 
 #### MacOS
 
-PortAudio dependecies (check [here](https://portaudio.com/docs/v19-doxydocs/compile_mac_coreaudio.html)):
+PortAudio dependecies (check [Building Portaudio for Mac OS X](https://www.portaudio.com/docs/v19-doxydocs/compile_mac_coreaudio.html)):
 ```bash
 -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices -framework Carbon
 ```
 
 #### Windows
 
-*To Do: Add prerequisites for Windows.*
+In order to run `make` and install PortAudio, MinGW-w64 needs to be installed in your system.
+MinGW-w64 is a port of Linux toolchains to Windows. This comes with Msys2 which provides a Linux environment and the package manager pacman.
+You can download MinGW-w64 and Msys2 following the instruction [here](https://www.msys2.org/).
+
+Msys2 comes with many toolchains (https://www.msys2.org/docs/environments/).
+Msvcrt-gcc toolchain is the one used in portaudio tutorial, and you can open the terminal searching for "MSYS2 MINGW64". 
+You should run `make` commands from that terminal.
+
+[Building PortAudio for Windows with MinGW-w64](https://files.portaudio.com/docs/v19-doxydocs/compile_windows_mingw-w64.html)
 
 #### Linux
 
-PortAudio dependencies [here](https://portaudio.com/docs/v19-doxydocs/compile_linux.html).
-```bash
--lrt -lm -lasound -ljack -pthread
-```
+[Building Portaudio for Linux](https://www.portaudio.com/docs/v19-doxydocs/compile_linux.html)
+
+*To Do: Add prerequisites for Linux.*
 
 ## Build Instructions
 
 This project uses `make` to build its executables. 
+You should run `make` from the location where the Makefile is located: in this instance the cpp folder.
+
 Below are the steps and options for building the project.
 
 ### Build and Running an Example

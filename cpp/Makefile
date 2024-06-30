@@ -8,7 +8,7 @@ DRESOURCES = -DRESOURCES_PATH=\"$(RESOURCES_PATH)\" -DTESTSOUND_PATH=\"$(TESTSOU
 
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -I$(IDIR) $(DRESOURCES)
+CXXFLAGS = -Wall -Wextra -std=c++20 -I$(IDIR) $(DRESOURCES)
 
 # Debug and Release flags
 DEBUGFLAGS = -DDEBUG -g # we define a preprocessor macro "DEBUG" and include debugging information
@@ -18,7 +18,7 @@ RELEASEFLAGS = -DNDEBUG -O2 # we disable debug assertions, debug specific code a
 CONFIG ?= debug
 
 ifeq ($(CONFIG), debug)
-    CXXFLAGS += $(DEBUGFLAGS)
+	CXXFLAGS += $(DEBUGFLAGS)
 else ifeq ($(CONFIG), release)
 	CXXFLAGS += $(RELEASEFLAGS)	
 endif
@@ -109,7 +109,7 @@ $(TARGET_EX_PORTAUDIO_WHITENOISE): examples/ex_portaudio_whitenoise.cpp $(IDIR)/
 
 $(TARGET_EX_PORTAUDIO_SINE): examples/ex_portaudio_sine.cpp $(IDIR)/SineGenerator.h
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -o $@ $< $(IPORTAUDIO) $(PORTAUDIO_DEPS) $(PORTAUDIO_LIB)	
+	$(CXX) $(CXXFLAGS) -o $@ $< $(IPORTAUDIO) $(PORTAUDIO_DEPS) $(PORTAUDIO_LIB)
 
 $(TARGET_EX_PORTAUDIO_SOUND): examples/ex_portaudio_sound.cpp $(IDIR)/SineGenerator.h $(IDIR)/Sound.h $(IDIR)/PaWrapper.h
 	@mkdir -p $(dir $@)
@@ -135,72 +135,75 @@ install: install-portaudio install-audiofile
 uninstall: uninstall-portaudio uninstall-audiofile
 
 #### PORTAUDIO ####
-# We're copying portaudio in the lib folder: "curl" is used so that we pass the file directly to "tar" without having to save it.
-# We then run the installation steps required for portaudio: for macos https://portaudio.com/docs/v19-doxydocs/compile_mac_coreaudio.html
-#
-# !Because -Werror is set in the compilation of portaudio and therea are multiple variables which are not used, the compilation fails.
-# Therefore in order to build portaudio correctly you may need to run ./configure first, remove the flag -Werror, and then run "$(MAKE) -j"
-# Alternatively building using "--disable-mac-universal" solves the issue!
+#A cross-platform, open-source C language library for real-time audio input and output https://portaudio.com/docs/v19-doxydocs/index.html
 
 PORTAUDIO_URL = https://files.portaudio.com/archives/pa_stable_v190700_20210406.tgz
 PORTAUDIO_DIR = libs/portaudio
 IPORTAUDIO = -I./$(PORTAUDIO_DIR)/include #include path for portaudio
-PORTAUDIO_LIB = ./$(PORTAUDIO_DIR)/lib/.libs/libportaudio.a #portaudio library
-PORTAUDIO_DEPS = 
 
-INSTALL_PORTAUDIO_CMD = mkdir -p libs && curl $(PORTAUDIO_URL) | tar -zx -C libs && cd $(PORTAUDIO_DIR) && ./configure && $(MAKE) -j
+PORTAUDIO_LIB = ./$(PORTAUDIO_DIR)/lib/.libs/libportaudio.a #portaudio library
+PORTAUDIO_DEPS = -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices -framework Carbon
+
+# Default install and uninstall commands are for MacOs: https://portaudio.com/docs/v19-doxydocs/compile_mac_coreaudio.html
+# We're copying portaudio in the lib folder: "curl" is used so that we pass the file directly to "tar" without having to save it.
+# !Because -Werror is set in the compilation of portaudio and therea are multiple variables which are not used, the compilation fails.
+# Alternatively building using "--disable-mac-universal" does not have the issue.
+INSTALL_PORTAUDIO_CMD = mkdir -p libs && curl $(PORTAUDIO_URL) | tar -zx -C libs && cd $(PORTAUDIO_DIR) && ./configure --disable-mac-universal && $(MAKE) -j
 UNINSTALL_PORTAUDIO_CMD = cd $(PORTAUDIO_DIR) && $(MAKE) uninstall && rm -rf $(PORTAUDIO_DIR)
 
-# OS-specific installation steps for PortAudio
+# Other OS overrides
 ifeq ($(UNAME_S),Linux)
-    INSTALL_PORTAUDIO_CMD = mkdir -p libs && curl $(PORTAUDIO_URL) | tar -zx -C libs && cd $(PORTAUDIO_DIR) && ./configure && $(MAKE) -j
-    PORTAUDIO_LIB = ./$(PORTAUDIO_DIR)/lib/.libs/libportaudio.a
-	PORTAUDIO_DEPS += -lrt -lm -lasound -ljack -pthread
-endif
-
-ifeq ($(UNAME_S),Darwin)
-    INSTALL_PORTAUDIO_CMD = mkdir -p libs && curl $(PORTAUDIO_URL) | tar -zx -C libs && cd $(PORTAUDIO_DIR) && ./configure --disable-mac-universal && $(MAKE) -j
-    PORTAUDIO_LIB = ./$(PORTAUDIO_DIR)/lib/.libs/libportaudio.a
-	PORTAUDIO_DEPS += -framework CoreAudio -framework AudioToolbox -framework AudioUnit -framework CoreServices -framework Carbon
+	INSTALL_PORTAUDIO_CMD = mkdir -p libs && curl $(PORTAUDIO_URL) | tar -zx -C libs && cd $(PORTAUDIO_DIR) && ./configure && $(MAKE) -j
+	PORTAUDIO_DEPS = -lrt -lm -lasound -ljack -pthread
 endif
 
 ifeq ($(OS),Windows_NT)
-    INSTALL_PORTAUDIO_CMD = if not exist libs mkdir libs && curl -L $(PORTAUDIO_URL) -o pa_stable_v190700_20210406.tgz && tar -zx -C libs -f pa_stable_v190700_20210406.tgz && cd $(PORTAUDIO_DIR) && ./configure && $(MAKE) -j
-    UNINSTALL_PORTAUDIO_CMD = cd $(PORTAUDIO_DIR) && $(MAKE) uninstall && rmdir /S /Q $(PORTAUDIO_DIR)
-    PORTAUDIO_LIB = # to add
-	PORTAUDIO_DEPS += # add
+	PORTAUDIO_DEPS = 
+
+	# Commands
+	# Because getting "The CXX compiler identification is unknown", added command to update gcc compiler (https://stackoverflow.com/questions/57463697/msys2-64-bit-the-c-compiler-identification-is-unknown):
+	# PORTAUDIO_LIB = ./$(PORTAUDIO_DIR)/build/libportaudio.a
+	# INSTALL_PORTAUDIO_CMD = mkdir -p libs && curl -L $(PORTAUDIO_URL) | tar -zx -C libs && \
+	#                         cd $(PORTAUDIO_DIR) && \
+	#                         pacman -S --noconfirm mingw-w64-x86_64-cmake mingw-w64-x86_64-ninja && \
+	#                         pacman -S --noconfirm base-devel gcc && \
+	#                         mkdir -p build && cd build && \
+	#                         cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Release -DPA_USE_DS=0 -DPA_USE_WDMKS=0 -DPA_USE_WDMKS_DEVICE_INFO=0 -DPA_USE_WMME=0 && \
+	#                         cmake --build .    
+
+	# Procompiled version of portaudio	
+	PORTAUDIO_LIB = -lportaudio				
+	INSTALL_PORTAUDIO_CMD = mkdir -p libs && curl -L $(PORTAUDIO_URL) | tar -zx -C libs && \
+							cd $(PORTAUDIO_DIR) && \
+							pacman -S --noconfirm mingw-w64-x86_64-portaudio						                       
+
+	# This command should be run before cleaning the folder "cmake --build . --target uninstall", however got error "Cannot find install manifest"
+	UNINSTALL_PORTAUDIO_CMD = rm -rf $(PORTAUDIO_DIR)
+
 endif
 
 install-portaudio:
-	mkdir -p libs
-	curl $(PORTAUDIO_URL) | tar -zx -C libs
-	cd $(PORTAUDIO_DIR) && ./configure --disable-mac-universal && $(MAKE) -j 
+	$(INSTALL_PORTAUDIO_CMD)
 
 uninstall-portaudio:
-	cd $(PORTAUDIO_DIR) && $(MAKE) uninstall
-	rm -rf $(PORTAUDIO_DIR)
+	$(UNINSTALL_PORTAUDIO_CMD)
 
 #### AUDIOFILE ####
 # Minimal header to read audio file of format wav and aiff: https://github.com/adamstark/AudioFile/tree/master
 
-# Default install and uninstall commands
 AUDIOFILE_DIR = external/audiofile
 IAUDIOFILE = -I./$(AUDIOFILE_DIR) #include path for audiofile
+
+# Default install and uninstall commands are for MacOs
 INSTALL_AUDIOFILE_CMD = mkdir -p external && git clone https://github.com/adamstark/AudioFile $(AUDIOFILE_DIR)
 UNINSTALL_AUDIOFILE_CMD = rm -rf $(AUDIOFILE_DIR)
 
-# OS-specific installation steps
-ifeq ($(UNAME_S),Linux)
-    INSTALL_AUDIOFILE_CMD = mkdir -p external && git clone https://github.com/adamstark/AudioFile $(AUDIOFILE_DIR)
-endif
-
-ifeq ($(UNAME_S),Darwin)
-    INSTALL_AUDIOFILE_CMD = mkdir -p external && git clone https://github.com/adamstark/AudioFile $(AUDIOFILE_DIR)
-endif
-
+# Other OS overrides
 ifeq ($(OS),Windows_NT)
-    INSTALL_AUDIOFILE_CMD = if not exist external mkdir external && git clone https://github.com/adamstark/AudioFile $(AUDIOFILE_DIR)
-    UNINSTALL_AUDIOFILE_CMD = rmdir /S /Q $(AUDIOFILE_DIR)
+	# We need to make sure git is installed in out shell to clone the repository
+	INSTALL_AUDIOFILE_CMD = pacman -S --noconfirm base-devel git && \
+							mkdir -p external && git clone https://github.com/adamstark/AudioFile $(AUDIOFILE_DIR)
+	UNINSTALL_AUDIOFILE_CMD = rm -rf $(AUDIOFILE_DIR)
 endif
 
 install-audiofile:
