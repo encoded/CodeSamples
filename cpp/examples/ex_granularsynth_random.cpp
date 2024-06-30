@@ -18,8 +18,8 @@ const std::string g_audioFilePath = std::string(RESOURCES_PATH) + "/audio/44.1/s
 
 // granular synth params
 int g_grainStartPositionRange[2] = {0, 0}; // the source index from where we're taking the grain from (capped at duration of the source)
-const int g_grainDurationSamples[2] = {1000, 20000}; // the grain lenght in num samples (this could be potentially expressed as a % of the source length)
-const float g_grainOverlap[2] = {0.2f, 0.8f}; // the overlap between grains expressed as a % of the grain length (range between 0.01f and 1.f)
+const int g_grainDurationSamples[2] = {1000, 10000}; // the grain lenght in num samples (this could be potentially expressed as a % of the source length)
+const float g_grainOverlap[2] = {0.4f, 0.6f}; // the overlap between grains expressed as a % of the grain length (range between 0.01f and 1.f)
 const float g_grainPitch[2] = {0.8f, 1.2f}; // the grain pitch shift (range between 0.1f and 10.f)
 
 /************************************************************/
