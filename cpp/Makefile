@@ -191,18 +191,20 @@ uninstall-portaudio:
 #### AUDIOFILE ####
 # Minimal header to read audio file of format wav and aiff: https://github.com/adamstark/AudioFile/tree/master
 
+
+AUDIOFILE_URL = https://github.com/encoded/AudioFile
 AUDIOFILE_DIR = external/audiofile
 IAUDIOFILE = -I./$(AUDIOFILE_DIR) #include path for audiofile
 
 # Default install and uninstall commands are for MacOs
-INSTALL_AUDIOFILE_CMD = mkdir -p external && git clone https://github.com/adamstark/AudioFile $(AUDIOFILE_DIR)
+INSTALL_AUDIOFILE_CMD = mkdir -p external && git clone $(AUDIOFILE_URL) $(AUDIOFILE_DIR)
 UNINSTALL_AUDIOFILE_CMD = rm -rf $(AUDIOFILE_DIR)
 
 # Other OS overrides
 ifeq ($(OS),Windows_NT)
 	# We need to make sure git is installed in out shell to clone the repository
 	INSTALL_AUDIOFILE_CMD = pacman -S --noconfirm base-devel git && \
-							mkdir -p external && git clone https://github.com/adamstark/AudioFile $(AUDIOFILE_DIR)
+							mkdir -p external && git clone $(AUDIOFILE_URL) $(AUDIOFILE_DIR)
 	UNINSTALL_AUDIOFILE_CMD = rm -rf $(AUDIOFILE_DIR)
 endif
 
